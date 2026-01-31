@@ -114,8 +114,8 @@ class Stage1Verification(unittest.TestCase):
         """3. API 封装逻辑验证 (Mock): 不联网验证参数传递"""
         print("\n[Test 3/4] Verifying Binance API Wrapper Logic (Using Mock)...")
         
-        # Mock Client 类
-        with unittest.mock.patch('binance.client.Client') as MockClient:
+        # 创建 Mock 的 Client
+        with unittest.mock.patch('src.api.binance_api.Client') as MockClient:
             mock_client_instance = MockClient.return_value
             
             # 设置 mock 返回值
