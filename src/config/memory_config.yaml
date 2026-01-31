@@ -1,0 +1,28 @@
+memory:
+  # 记忆保留时间 (天)
+  retention:
+    short_term: 1  # 24小时
+    long_term_min: 30 # 重要性<20
+    long_term_med: 90 # 重要性20-50
+    long_term_high: 180 # 重要性50-80
+    # 重要性>80 永久保留
+
+  # 清理阈值
+  cleanup:
+    low_importance_threshold: 20
+    medium_importance_threshold: 50
+    high_importance_threshold: 80
+
+  # 重要性评分权重
+  importance_weights:
+    profit_high: 85      # 盈利 > 10%
+    profit_loss: 80      # 亏损 > 5%
+    volatility_high: 70  # 波动率 > 正常2倍
+    consensus_split: 60  # AI 强烈分歧
+    recency_bonus: 20    # 最近7天加分
+
+  # 检索配置
+  retrieval:
+    model_name: "all-MiniLM-L6-v2" # sentence-transformers 模型
+    similarity_threshold: 0.5
+    default_top_k: 5
