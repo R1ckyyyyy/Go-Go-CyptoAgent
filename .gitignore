@@ -35,6 +35,15 @@ data/logs/
 config/api_keys.yaml
 *.log
 
+# Documentation & Tasks
+task/
+PROJECT_STRUCTURE.md
+
+# Tests (Exclude all local tests except verification script)
+tests/*
+!tests/verify_stage1.py
+!tests/__init__.py
+
 # Windows
 Thumbs.db
 ehthumbs.db
