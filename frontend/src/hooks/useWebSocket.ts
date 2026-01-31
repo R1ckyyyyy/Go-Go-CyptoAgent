@@ -21,6 +21,11 @@ export const useWebSocket = (url: string = '/ws') => {
     const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
 
     useEffect(() => {
+        // Prevent multiple connections in React Strict Mode
+        if (socketRef.current?.readyState === WebSocket.OPEN || status === 'connected' || status === 'connecting') {
+            return;
+        }
+
         const connectWs = () => {
             // Bypass Vite proxy for WebSocket to avoid 403/HMR issues
             // In production, this should use window.location.host if served by Nginx on same port
@@ -41,8 +46,15 @@ export const useWebSocket = (url: string = '/ws') => {
                 console.log('WS Disconnected');
                 setStatus('disconnected');
                 useWebSocketStore.setState({ isConnected: false });
-                // Reconnect logic could go here
-                setTimeout(connectWs, 5000);
+
+                // Only reconnect if component is still mounted
+                // Simple exponential backoff or static delay
+                setTimeout(() => {
+                    if (transactionRef.current) {
+                        // Ideally we check if we are already connected, but the connectWs function has a guard at top.
+                        connectWs();
+                    }
+                }, 3000);
             };
 
             ws.onerror = (err) => {
@@ -56,14 +68,26 @@ export const useWebSocket = (url: string = '/ws') => {
                     useWebSocketStore.setState({ lastMessage: data });
                 } catch (e) {
                     // Ignore non-json
+                    console.debug("Received non-JSON message:", event.data);
                 }
             };
         };
 
+        // Use a ref to track if effect is active to prevent reconnect during unmount cleanup race
+        const transactionRef = { current: true };
+
         connectWs();
 
         return () => {
-            socketRef.current?.close();
+            transactionRef.current = false;
+            // In Strict Mode, we might want to keep the connection if it was just established?
+            // Actually standard practice is to close. The issue is usually the 'connect' running twice.
+            // But we added the guard at the top.
+
+            if (socketRef.current) {
+                socketRef.current.close();
+                socketRef.current = null;
+            }
         };
     }, [url]);
 

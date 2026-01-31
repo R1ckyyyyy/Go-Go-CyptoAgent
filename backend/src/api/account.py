@@ -18,6 +18,8 @@ class BalanceResponse(BaseModel):
     total_balance: float
     available_balance: float
     currency: str
+    today_pnl: float = 0.0
+    total_pnl: float = 0.0
 
 class PerformanceResponse(BaseModel):
     total_pnl: float
@@ -28,37 +30,48 @@ class PerformanceResponse(BaseModel):
 
 @router.get("/balance", response_model=BalanceResponse)
 async def get_balance():
-    """获取账户余额 (Mock for now, should connect to Exchange/DB)"""
-    # TODO: Connect to Exchange API or store in DB
+    """获取账户余额 (Mock)"""
     return BalanceResponse(
-        total_balance=10500.0,
-        available_balance=5000.0,
-        currency="USDT"
+        total_balance=12450.80,
+        available_balance=5200.50,
+        currency="USDT",
+        today_pnl=250.50,
+        total_pnl=1450.80
     )
 
 @router.get("/positions", response_model=List[PositionResponse])
 async def get_positions():
-    """获取当前持仓"""
-    try:
-        positions = db.get_all_positions()
-        return [
-            PositionResponse(
-                symbol=p.symbol,
-                amount=p.amount,
-                avg_price=p.avg_price,
-                current_price=p.current_price,
-                pnl=p.pnl
-            ) for p in positions
-        ]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+    """获取当前持仓 (Mock)"""
+    # 模拟数据
+    return [
+        PositionResponse(
+            symbol="BTCUSDT",
+            amount=0.15,
+            avg_price=42000.00,
+            current_price=43500.00,
+            pnl=225.00
+        ),
+        PositionResponse(
+            symbol="ETHUSDT",
+            amount=2.5,
+            avg_price=2200.00,
+            current_price=2150.00,
+            pnl=-125.00
+        ),
+        PositionResponse(
+            symbol="SOLUSDT",
+            amount=50.0,
+            avg_price=85.00,
+            current_price=92.50,
+            pnl=375.00
+        )
+    ]
 
 @router.get("/performance", response_model=PerformanceResponse)
 async def get_performance():
-    """获取账户表现"""
-    # TODO: Calculate from trade history
+    """获取账户表现 (Mock)"""
     return PerformanceResponse(
-        total_pnl=1500.0,
-        pnl_percentage=14.2,
-        win_rate=0.65
+        total_pnl=475.0,
+        pnl_percentage=3.96,
+        win_rate=0.68
     )

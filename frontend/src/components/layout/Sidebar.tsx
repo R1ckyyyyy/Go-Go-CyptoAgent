@@ -4,11 +4,11 @@ import { LayoutDashboard, Network, CandlestickChart, BrainCircuit, Settings } fr
 
 const Sidebar: React.FC = () => {
     const navItems = [
-        { path: '/', icon: LayoutDashboard, label: 'Dashboard' },
-        { path: '/ai-tree', icon: Network, label: 'AI Tree' },
-        { path: '/trading', icon: CandlestickChart, label: 'Trading' },
-        { path: '/insights', icon: BrainCircuit, label: 'Insights' },
-        { path: '/settings', icon: Settings, label: 'Settings' },
+        { path: '/', icon: LayoutDashboard, label: '仪表盘' },
+        { path: '/ai-tree', icon: Network, label: 'AI 决策树' },
+        { path: '/trading', icon: CandlestickChart, label: '交易终端' },
+        { path: '/insights', icon: BrainCircuit, label: '市场洞察' },
+        { path: '/settings', icon: Settings, label: '系统设置' },
     ];
 
     return (

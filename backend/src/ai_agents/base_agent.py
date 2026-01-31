@@ -208,5 +208,21 @@ class BaseAgent(ABC):
             logger.error(f"Failed to log decision: {e}")
 
     async def use_tool(self, tool_name: str, params: Dict[str, Any]) -> Any:
-        logger.info(f"Agent {self.agent_id} using tool {tool_name} with params {params}")
-        return None
+        """
+        执行工具
+        目前为基础框架，后续对接 ToolRegistry
+        """
+        logger.info(f"Agent {self.agent_id} calling tool: {tool_name} with {params}")
+        
+        # 临时 Mock 实现，后续替换为真实的 tool_registry.execute(tool_name, params)
+        if tool_name == "get_market_data":
+            return {"symbol": params.get("symbol"), "price": 42000.0, "source": "mock"}
+        elif tool_name == "calculator":
+            # 简单的示例工具
+            expr = params.get("expression")
+            try:
+                return eval(expr)
+            except:
+                return "Error"
+                
+        return f"Tool {tool_name} executed successfully (Mock)"

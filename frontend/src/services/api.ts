@@ -25,6 +25,8 @@ export const tradingApi = {
 export const aiApi = {
     getDecisions: () => api.get('/ai/decisions'),
     getCommunications: () => api.get('/ai/communications'),
+    getTreeStructure: () => api.get('/ai/tree-structure'),
+    getNodeStatus: () => api.get('/ai/status'),
 };
 
 export default api;
