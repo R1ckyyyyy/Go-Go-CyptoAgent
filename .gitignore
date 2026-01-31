@@ -46,3 +46,8 @@ tests/
 Thumbs.db
 ehthumbs.db
 Desktop.ini
+
+# Secret Envs
+.env
+.env.*
+!.env.example

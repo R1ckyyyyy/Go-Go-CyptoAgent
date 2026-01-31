@@ -8,6 +8,11 @@ binance:
 anthropic:
   api_key: "your_claude_api_key_here"
 
+# Google Gemini API 配置 (新增)
+gemini:
+  api_key: "your_gemini_api_key_here"
+  model: "gemini-2.0-flash-exp" # 或 future gemini-3
+
 # 数据库加密配置
 encryption:
   key: "your_encryption_key_here_32_bytes"

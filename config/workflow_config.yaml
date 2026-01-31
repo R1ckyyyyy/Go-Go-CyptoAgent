@@ -1,0 +1,22 @@
+workflow:
+  triggers:
+    schedule: "0 * * * *"  # 每小时
+    price_alert:
+      threshold_percent: 5.0
+      interval_minutes: 15
+  
+  execution:
+    timeout_seconds: 60
+    max_retries: 3
+    retry_delay_seconds: 5
+    
+  agents:
+    macro_planner:
+      model: "claude-3-5-sonnet-20240620"
+      temperature: 0.7
+    technical_analyst:
+      model: "claude-3-5-sonnet-20240620"
+      temperature: 0.3
+    decision_maker:
+      model: "claude-3-5-sonnet-20240620"
+      temperature: 0.2
