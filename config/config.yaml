@@ -1,0 +1,70 @@
+# 应用配置
+app:
+  name: "Crypto Trading AI"
+  version: "1.0.0"
+  debug: false
+
+# 交易配置
+trading:
+  mode: "simulated"  # simulated | live
+  symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
+  initial_balance: 10000.0
+  
+# 策略配置
+strategy:
+  default: "moderate"
+  auto_adjust: true
+  
+# AI配置
+ai:
+  model: "claude-sonnet-4-20250514"
+  max_tokens: 4000
+  temperature: 0.7
+  timeout: 30
+  
+# 工作流配置
+workflow:
+  trigger:
+    scheduled: true
+    interval_minutes: 60
+    price_change_threshold: 0.05
+  timeout_seconds: 60
+  max_retries: 3
+  
+# 风控配置
+risk:
+  max_daily_loss: 0.05
+  max_single_loss: 0.02
+  stop_loss_percentage: 0.03
+  take_profit_ratio: 2.0
+  daily_trade_limit: 20
+  max_position_per_symbol: 0.30
+  max_total_position: 0.80
+
+# 记忆配置
+memory:
+  retention:
+    short_term_hours: 24
+    medium_term_days: 90
+    long_term_days: 365
+  cleanup_schedule: "0 3 * * 0"  # 每周日凌晨3点
+  importance_threshold: 20
+
+# 监控配置
+monitoring:
+  enabled: true
+  prometheus_port: 9090
+  metrics_update_interval: 10
+  
+# 告警配置
+alerts:
+  enabled: true
+  channels: ["log", "email"]
+  thresholds:
+    loss_percentage: -0.05
+    api_error_rate: 0.10
+    latency_seconds: 5.0
+
+# 网络配置
+network:
+  proxy: "http://127.0.0.1:7890"

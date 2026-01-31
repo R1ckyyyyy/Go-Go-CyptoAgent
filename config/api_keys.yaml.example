@@ -1,0 +1,17 @@
+# Binance API 配置
+binance:
+  api_key: "your_api_key_here"
+  api_secret: "your_api_secret_here"
+  testnet: true
+
+# Anthropic Claude API 配置
+anthropic:
+  api_key: "your_claude_api_key_here"
+
+# 数据库加密配置
+encryption:
+  key: "your_encryption_key_here_32_bytes"
+
+# JWT 配置
+jwt:
+  secret: "your_jwt_secret_here"
