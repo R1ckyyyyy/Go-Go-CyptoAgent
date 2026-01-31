@@ -3,13 +3,17 @@ from loguru import logger
 import os
 
 # 确保日志目录存在
-LOG_DIR = os.path.join(os.getcwd(), "data", "logs")
+# 获取项目根目录: backend
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# logger.py is in backend/src/utils, so root is up 2 levels
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+LOG_DIR = os.path.join(PROJECT_ROOT, "data", "logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
 def setup_logger(log_level="INFO", log_file=None):
     """
     配置全局 Logger
-    :param log_level: 日志级别 (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+    :param log_level: 日志级别
     :param log_file: 日志文件路径，默认为 data/logs/app.log
     """
     logger.remove()  # 移除默认的 handler

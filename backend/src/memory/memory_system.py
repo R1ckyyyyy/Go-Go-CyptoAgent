@@ -7,7 +7,20 @@ from loguru import logger
 from .memory_retrieval import MemoryRetrieval
 
 class MemoryManager:
-    def __init__(self, config_path: str = "src/config/memory_config.yaml", storage_dir: str = "data/memory"):
+    def __init__(self, config_path: str = None, storage_dir: str = None):
+        # 动态获取路径
+        if config_path is None or storage_dir is None:
+            current_dir = os.path.dirname(os.path.abspath(__file__))
+            backend_root = os.path.dirname(os.path.dirname(os.path.dirname(current_dir)))
+            
+            if config_path is None:
+                config_path = os.path.join(backend_root, "backend", "src", "config", "memory_config.yaml")
+                if not os.path.exists(config_path): # 尝试备用路径 (重构后可能是 src/config)
+                     config_path = os.path.join(backend_root, "src", "config", "memory_config.yaml")
+
+            if storage_dir is None:
+                storage_dir = os.path.join(backend_root, "data", "memory")
+
         self.retriever = MemoryRetrieval(config_path)
         self.storage_dir = storage_dir
         self.config = self.retriever.config

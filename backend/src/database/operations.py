@@ -8,7 +8,13 @@ from src.database.models import Base, Position, Trade, MarketData, AIDecision, A
 from src.utils.logger import logger
 
 # 数据库路径配置
-DB_PATH = os.path.join(os.getcwd(), "data", "database.db")
+# 数据库路径配置
+# 获取当前文件所在目录: backend/src/database
+current_dir = os.path.dirname(os.path.abspath(__file__))
+# 向上两级找到 backend 根目录
+backend_root = os.path.dirname(os.path.dirname(current_dir))
+# 数据目录在 backend/data
+DB_PATH = os.path.join(backend_root, "data", "database.db")
 DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 class DatabaseManager:
@@ -112,6 +118,21 @@ class DatabaseManager:
                 logger.info(f"Logged AI decision: {decision_data.get('decision_type')}")
             except Exception as e:
                 logger.error(f"Failed to log AI decision: {e}")
+
+    def get_decisions(self, limit: int = 50) -> List[AIDecision]:
+        """获取最近的AI决策"""
+        with self.get_session() as session:
+            decisions = session.query(AIDecision).order_by(AIDecision.timestamp.desc()).limit(limit).all()
+            session.expunge_all()
+            return decisions
+
+    def get_communications(self, limit: int = 50) -> List[AICommunication]:
+        """获取最近的AI通信记录"""
+        with self.get_session() as session:
+            # 只有当 AICommunication 表存在时才查询 (假设模型中已定义)
+            comms = session.query(AICommunication).order_by(AICommunication.timestamp.desc()).limit(limit).all()
+            session.expunge_all()
+            return comms
 
     # --- Config Operations ---
     def get_config(self, key: str, default: Any = None) -> str:
