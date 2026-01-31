@@ -39,10 +39,8 @@ config/api_keys.yaml
 task/
 PROJECT_STRUCTURE.md
 
-# Tests (Exclude all local tests except verification script)
-tests/*
-!tests/verify_stage1.py
-!tests/__init__.py
+# Tests
+tests/
 
 # Windows
 Thumbs.db
