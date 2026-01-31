@@ -1,0 +1,19 @@
+trading_preference:
+  risk_level: "high"
+  trading_style: "scalping"
+  max_position_per_symbol: 0.50
+  max_total_position: 1.00
+  prefer_symbols: ["BTC", "ETH", "SOL", "BNB"]
+  forbidden_symbols: []
+
+risk_control:
+  max_daily_loss: 0.10      # 10%
+  max_single_loss: 0.03     # 3%
+  stop_loss_percentage: 0.05 # 5%
+  take_profit_ratio: 3.0    # 3:1
+  daily_trade_limit: 50
+
+execution:
+  mode: "simulated"
+  manual_confirm: false
+  auto_trading: true

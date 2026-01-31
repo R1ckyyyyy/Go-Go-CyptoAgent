@@ -1,0 +1,19 @@
+trading_preference:
+  risk_level: "medium"
+  trading_style: "day"
+  max_position_per_symbol: 0.30
+  max_total_position: 0.80
+  prefer_symbols: ["BTC", "ETH", "SOL"]
+  forbidden_symbols: []
+
+risk_control:
+  max_daily_loss: 0.05      # 5%
+  max_single_loss: 0.02     # 2%
+  stop_loss_percentage: 0.03 # 3%
+  take_profit_ratio: 2.0    # 2:1
+  daily_trade_limit: 20
+
+execution:
+  mode: "simulated"
+  manual_confirm: false
+  auto_trading: true
