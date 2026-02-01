@@ -3,6 +3,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from contextlib import contextmanager
 from typing import List, Optional, Any
 import os
+from datetime import datetime
 
 from src.database.models import Base, Position, Trade, MarketData, AIDecision, AICommunication, Memory, Config
 from src.utils.logger import logger
@@ -154,6 +155,58 @@ class DatabaseManager:
                 logger.info(f"Config updated: {key} = {value}")
             except Exception as e:
                 logger.error(f"Failed to set config {key}: {e}")
+
+    # --- Trigger Operations ---
+    def add_trigger(self, trigger_data: dict) -> int:
+        """添加新触发器"""
+        with self.get_session() as session:
+            try:
+                # Needed to import CoordinatorTrigger here or ensure it's in models import at top
+                from src.database.models import CoordinatorTrigger 
+                trigger = CoordinatorTrigger(**trigger_data)
+                session.add(trigger)
+                session.flush() # get id
+                logger.info(f"Added trigger: {trigger_data.get('description')}")
+                return trigger.id
+            except Exception as e:
+                logger.error(f"Failed to add trigger: {e}")
+                return -1
+
+    def get_active_triggers(self) -> List[Any]:
+        """获取所有激活的触发器"""
+        with self.get_session() as session:
+            from src.database.models import CoordinatorTrigger, TriggerStatus
+            triggers = session.query(CoordinatorTrigger).filter(
+                CoordinatorTrigger.status == TriggerStatus.ACTIVE
+            ).all()
+            session.expunge_all()
+            return triggers
+
+    def update_trigger_status(self, trigger_id: int, status: str):
+        """更新触发器状态"""
+        with self.get_session() as session:
+            from src.database.models import CoordinatorTrigger
+            t = session.query(CoordinatorTrigger).get(trigger_id)
+            if t:
+                t.status = status
+                t.triggered_at = datetime.utcnow() if status == 'TRIGGERED' else None
+
+    # --- Memory Operations ---
+    def add_memory(self, memory_data: dict):
+        """添加系统记忆"""
+        with self.get_session() as session:
+            try:
+                memory = Memory(**memory_data)
+                session.add(memory)
+            except Exception as e:
+                logger.error(f"Failed to add memory: {e}")
+
+    def get_recent_memories(self, limit: int = 10) -> List[Memory]:
+        """获取最近记忆"""
+        with self.get_session() as session:
+            mems = session.query(Memory).order_by(Memory.timestamp.desc()).limit(limit).all()
+            session.expunge_all()
+            return mems
 
 # 全局数据库实例
 db = DatabaseManager()

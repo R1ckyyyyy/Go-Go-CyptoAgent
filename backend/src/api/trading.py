@@ -39,11 +39,11 @@ async def get_trade_history(limit: int = 50):
             TradeResponse(
                 id=t.id,
                 symbol=t.symbol,
-                side=t.side,
-                amount=t.amount,
+                side=t.side.name if hasattr(t.side, 'name') else str(t.side),
+                amount=t.quantity,
                 price=t.price,
                 timestamp=t.timestamp,
-                pnl=t.pnl
+                pnl=getattr(t, 'pnl', None)
             ) for t in trades
         ]
     except Exception as e:

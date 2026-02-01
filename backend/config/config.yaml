@@ -6,7 +6,7 @@ app:
 
 # 交易配置
 trading:
-  mode: "simulated"  # simulated | live
+  mode: "PAPER"  # PAPER | REAL
   symbols: ["BTCUSDT", "ETHUSDT", "SOLUSDT"]
   initial_balance: 10000.0
   

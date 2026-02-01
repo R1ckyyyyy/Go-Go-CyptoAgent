@@ -42,10 +42,25 @@ class BinanceConnector:
     """币安API封装类"""
     
     def __init__(self, use_testnet: bool = True):
-        keys = load_api_keys()
-        self.api_key = keys.get('api_key', 'YOUR_API_KEY')
-        self.api_secret = keys.get('api_secret', 'YOUR_API_SECRET')
-        self.use_testnet = keys.get('testnet', use_testnet)
+        # 优先读取环境变量
+        env_api_key = os.getenv('BINANCE_API_KEY')
+        env_api_secret = os.getenv('BINANCE_API_SECRET')
+        
+        if env_api_key and env_api_secret:
+            self.api_key = env_api_key
+            self.api_secret = env_api_secret
+            self.use_testnet = use_testnet # Env var doesn't typically specify testnet boolean, keeping arg
+            logger.info("Loaded Binance API keys from environment variables.")
+        else:
+            # Fallback to YAML
+            keys = load_api_keys()
+            self.api_key = keys.get('api_key', '')
+            self.api_secret = keys.get('api_secret', '')
+            self.use_testnet = keys.get('testnet', use_testnet)
+            logger.info("Loaded Binance API keys from YAML file.")
+
+        if not self.api_key or not self.api_secret:
+            logger.warning("Binance API keys not found! Connector will operate in restricted mode.")
         
         # 加载代理配置
         self.proxies = None
@@ -127,6 +142,24 @@ class BinanceConnector:
         return depth
 
     @retry()
+    def get_24hr_ticker(self, symbols: List[str] = None) -> List[Dict]:
+        """获取24小时价格变动统计 (Bulk)"""
+        # Binance API 支持无参数获取所有 ticker，或者单个。python-binance 有 get_ticker 接口
+        # 为了效率，我们直接获取所有然后过滤，或者循环获取（如果有cache）
+        # 这里直接调用 client.get_ticker() 如果不传 symbol 会返回所有
+        all_tickers = self.client.get_ticker()
+        
+        if not symbols:
+            # 默认返回 TOP 关注的 -> 这里简单处理，如果有指定列表则过滤
+            # 实际业务中不建议返回几千个，太慢
+            return all_tickers
+        
+        # Filter list
+        target_set = set(symbols)
+        filtered = [t for t in all_tickers if t['symbol'] in target_set]
+        return filtered
+
+    @retry()
     def place_order(self, symbol: str, side: str, order_type: str, quantity: float, price: float = None) -> Dict:
         """下单"""
         params = {
@@ -153,5 +186,13 @@ class BinanceConnector:
     @retry()
     def get_order_status(self, symbol: str, order_id: str) -> Dict:
         """查询订单"""
-        order = self.client.get_order(symbol=symbol, orderId=order_id)
-        return order
+# ... existing code ...
+
+# --- Singleton Logic ---
+_connector_instance: Optional['BinanceConnector'] = None
+
+def get_binance_connector(use_testnet: bool = True) -> 'BinanceConnector':
+    global _connector_instance
+    if _connector_instance is None:
+        _connector_instance = BinanceConnector(use_testnet=use_testnet)
+    return _connector_instance

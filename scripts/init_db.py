@@ -4,7 +4,7 @@ import os
 # 将项目根目录添加到 python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 root_dir = os.path.dirname(current_dir)
-sys.path.append(root_dir)
+sys.path.append(os.path.join(root_dir, "backend"))
 
 from src.database.operations import db
 from src.utils.logger import logger

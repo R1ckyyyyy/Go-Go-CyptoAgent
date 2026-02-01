@@ -45,7 +45,8 @@ backend/venv/
 
 # --- Project Data & Logs ---
 backend/data/database.db
-backend/data/logs/
+backend/data/logs/*
+!backend/data/logs/.gitkeep
 *.log
 
 # --- Secret Envs ---

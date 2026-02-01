@@ -4,10 +4,68 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%; --foreground: 0 0% 98%;
+    --background: 0 0% 100%;
+    /* White */
+    --foreground: 240 10% 3.9%;
+    /* Dark Zinc */
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    /* Dark for primary actions */
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
   }
-  
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-zinc-50 text-zinc-900 antialiased;
+    /* Light Mode Gradient: Subtle warm/cool mix */
+    background-image:
+      radial-gradient(circle at 15% 50%, rgba(200, 200, 255, 0.4), transparent 25%),
+      radial-gradient(circle at 85% 30%, rgba(255, 200, 200, 0.4), transparent 25%);
+    background-attachment: fixed;
+  }
+
+  /* Custom Scrollbar - Light */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-zinc-300 rounded-full hover:bg-zinc-400;
+  }
+}
+
+@layer components {
+
+  /* Matte Glass Effect - Light */
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/40 shadow-xl shadow-black/5;
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-md border border-white/60 hover:bg-white/80 hover:shadow-lg transition-all duration-300;
+  }
+
+  /* Minimalist Text Gradient (Dark Grey to Black) */
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-zinc-700 to-black;
   }
 }

@@ -96,7 +96,7 @@ class BaseAgent(ABC):
             message_type=message_type,
             content=content
         )
-        self.channel.publish(msg)
+        await self.channel.publish(msg)
 
     async def call_llm(
         self,

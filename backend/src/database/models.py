@@ -125,3 +125,40 @@ class Config(Base):
 
     def __repr__(self):
         return f"<Config(key='{self.config_key}', value='{self.config_value}')>"
+
+class TriggerType(str, enum.Enum):
+    PRICE_LEVEL = "PRICE_LEVEL"       # 价格触达 (e.g. BTC < 42000)
+    PRICE_CHANGE = "PRICE_CHANGE"     # 价格变幅 (e.g. 1h Drop > 3%)
+    TIME_EVENT = "TIME_EVENT"         # 定时触发 (e.g. Every 4h)
+    INDICATOR_SIGNAL = "INDICATOR"    # 指标触发 (e.g. RSI > 80)
+    MANUAL = "MANUAL"                 # 人工触发 (Analyze Now)
+
+class TriggerStatus(str, enum.Enum):
+    ACTIVE = "ACTIVE"
+    TRIGGERED = "TRIGGERED" 
+    EXPIRED = "EXPIRED"
+    CANCELED = "CANCELED"
+
+class CoordinatorTrigger(Base):
+    """协调AI的自驱动触发器"""
+    __tablename__ = 'coordinator_triggers'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    description = Column(String(200), comment="触发描述 (e.g. 'BTC跌破43000止损检查')")
+    trigger_type = Column(Enum(TriggerType), nullable=False)
+    
+    # 触发条件 JSON
+    # e.g. {"symbol": "BTCUSDT", "condition": "LTE", "value": 42000}
+    # e.g. {"cron": "0 */4 * * *"}
+    condition_data = Column(JSON, nullable=False)
+    
+    status = Column(Enum(TriggerStatus), default=TriggerStatus.ACTIVE)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+    triggered_at = Column(DateTime, nullable=True)
+    
+    # 关联的上下文记忆ID (为什么设置这个Trigger)
+    context_memory_id = Column(Integer, nullable=True)
+
+    def __repr__(self):
+        return f"<Trigger(desc='{self.description}', status='{self.status}')>"

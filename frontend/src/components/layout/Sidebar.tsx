@@ -12,16 +12,16 @@ const Sidebar: React.FC = () => {
     ];
 
     return (
-        <aside className="w-64 border-r border-gray-800 h-[calc(100vh-4rem)] bg-zinc-950 flex flex-col p-4">
-            <div className="space-y-2">
+        <aside className="w-64 border-r border-gray-200 h-[calc(100vh-4rem)] bg-zinc-50/50 backdrop-blur-xl flex flex-col p-4">
+            <div className="space-y-2 flex-1">
                 {navItems.map((item) => (
                     <NavLink
                         key={item.path}
                         to={item.path}
                         className={({ isActive }) =>
                             `flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                                ? 'bg-blue-600/10 text-blue-500'
-                                : 'text-gray-400 hover:bg-gray-900 hover:text-gray-200'
+                                ? 'bg-zinc-200 text-zinc-900 font-medium'
+                                : 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'
                             }`
                         }
                     >

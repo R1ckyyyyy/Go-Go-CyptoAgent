@@ -14,6 +14,7 @@ class MessageType(str, Enum):
     DATA_RESPONSE = "DATA_RESPONSE"       # 数据响应
     ERROR_REPORT = "ERROR_REPORT"         # 错误报告
     STATUS_UPDATE = "STATUS_UPDATE"       # 状态更新
+    ACTION_REQUEST = "ACTION_REQUEST"     # 动作请求
 
 class AgentMessage(BaseModel):
     """
@@ -36,6 +37,10 @@ class AgentMessage(BaseModel):
     def from_json(cls, json_str: str) -> "AgentMessage":
         return cls.model_validate_json(json_str)
 
+
+import inspect
+import asyncio
+
 class CommunicationChannel:
     """
     简单的内存消息通道，用于代理间直接传递消息
@@ -52,26 +57,36 @@ class CommunicationChannel:
             cls._instance._listeners = {}
         return cls._instance
 
-    def publish(self, message: AgentMessage):
-        """发布消息"""
-        print(f"[Channel] Message from {message.sender} to {message.receiver}: {message.message_type}")
+    async def publish(self, message: AgentMessage):
+        """发布消息 (Async)"""
+        with open("debug_channel.log", "a", encoding="utf-8") as f:
+            f.write(f"MSG: {message.sender}->{message.receiver} [{message.message_type}]\n")
+            f.write(f"Listeners: {list(self._listeners.keys())}\n")
+
         self._message_queue.append(message)
         
-        # 触发监听器 (简化版Observer模式)
+        # Helper to execute callback
+        async def exec_callback(cb, msg):
+            try:
+                if inspect.iscoroutinefunction(cb):
+                    await cb(msg)
+                else:
+                    cb(msg)
+            except Exception as e:
+                print(f"Error acting on message: {e}")
+
+        # Target Listeners
         if message.receiver in self._listeners:
             for callback in self._listeners[message.receiver]:
-                try:
-                    callback(message)
-                except Exception as e:
-                    print(f"Error acting on message: {e}")
+                await exec_callback(callback, message)
         
-        # 同时触发广播监听器
+        # Broadcast Listeners
         if "all" in self._listeners:
+            print(f"[Channel] Broadcasting to local listeners: {len(self._listeners['all'])}")
             for callback in self._listeners["all"]:
-                try:
-                    callback(message)
-                except Exception as e:
-                    print(f"Error acting on broadcast: {e}")
+                await exec_callback(callback, message)
+        else:
+            print("[Channel] No broadcast listeners found!")
 
     def subscribe(self, agent_id: str, callback):
         """订阅发给特定Agent的消息"""
